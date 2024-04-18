@@ -3,27 +3,24 @@
 
 echo "installing deps..."
 
-apt-get update
-apt-get install -y \
+sudo dnf -y install \
      autoconf \
      automake \
-     autopoint \
      bison \
      curl \
      flex \
-     g++ \
+     gcc-c++ \
      gettext \
+     gettext-devel \
      git \
      help2man \
-     libssl-dev \
      libtool \
      make \
+     openssl-devel \
      pkg-config \
      po4a \
      texinfo \
      unzip \
      wget \
-     zlib1g-dev \
+     zlib \
      zstd
-
-echo "done"

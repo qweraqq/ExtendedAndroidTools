@@ -29,12 +29,15 @@ ANDROID_OUT_DIR = $(OUT_DIR)/android/$(NDK_ARCH)
 ANDROID_SYSROOTS_OUT_DIR = $(OUT_DIR)/sysroots/$(NDK_ARCH)
 HOST_OUT_DIR = $(OUT_DIR)/host
 
+HOST_OS = $(shell uname -o)
+HOST_MACHINE = $(shell uname -m)
+
 export PATH:=$(abspath $(HOST_OUT_DIR)/bin):$(PATH)
 
 all:
 	@echo "Choose a project to build"
 
-include toolchain/toolchain.mk
+include toolchains/toolchains.mk
 
 $(ANDROID_BUILD_DIR) $(HOST_BUILD_DIR) $(DOWNLOADS_DIR) $(ANDROID_SYSROOTS_OUT_DIR):
 	mkdir -p $@
@@ -52,7 +55,10 @@ clean:
 	-rm -fr $(BUILD_DIR)
 	-rm -fr $(OUT_DIR)
 
-.PHONY: clean fetch-sources remove-sources install uninstall
+setup-env:
+	@echo "export PATH=\"$(PATH)\""
+
+.PHONY: clean fetch-sources remove-sources install uninstall setup-env
 .DELETE_ON_ERROR:
 
 include projects/project.mk

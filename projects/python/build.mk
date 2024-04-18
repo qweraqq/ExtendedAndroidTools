@@ -15,14 +15,15 @@ $(PYTHON_ANDROID):
 	cp $(PYTHON_SRCS)/LICENSE $(ANDROID_OUT_DIR)/licenses/python
 	touch $@
 
-$(PYTHON_HOST): $(HOST_OUT_DIR)/bin/python3.10-no--install-layout
+$(PYTHON_HOST): $(HOST_OUT_DIR)/bin/python.xinstall
 	cd $(PYTHON_HOST_BUILD_DIR) && make install -j $(THREADS)
 	touch $@
 
-$(HOST_OUT_DIR)/bin/python3.10-no--install-layout: projects/python/no--install-layout.template
-$(HOST_OUT_DIR)/bin/python3.10-no--install-layout: | $(HOST_OUT_DIR)
-	sed -e "s+<HOST_OUT_DIR>+$(abspath $(HOST_OUT_DIR))+" \
-		projects/python/no--install-layout.template > $@
+$(HOST_OUT_DIR)/bin/python.xinstall: projects/python/python.xinstall.template
+$(HOST_OUT_DIR)/bin/python.xinstall: | $(HOST_OUT_DIR)
+	cp $^ $@
+	sed -ibkp -e "s+<HOST_OUT_DIR>+$(abspath $(HOST_OUT_DIR))+g" $@
+	sed -ibkp -e "s+<ANDROID_OUT_DIR>+$(abspath $(ANDROID_OUT_DIR))+g" $@
 	chmod +x $@
 
 $(PYTHON_ANDROID_BUILD_DIR): \
@@ -34,6 +35,8 @@ $(PYTHON_ANDROID_BUILD_DIR): $(PYTHON_HOST)
 		$(ANDROID_EXTRA_CONFIGURE_FLAGS) \
 		$(PYTHON_ANDROID_EXTRA_CONFIG_OPTIONS)
 
+$(PYTHON_HOST_BUILD_DIR): \
+    export PKG_CONFIG_LIBDIR=$(abspath $(HOST_OUT_DIR)/lib/pkgconfig)
 $(PYTHON_HOST_BUILD_DIR): $(HOST_CONFIG_SITE)
 	mkdir -p $@
 	cd $@ && $(PYTHON_SRCS)/configure \

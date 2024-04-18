@@ -5,7 +5,6 @@ BPFTRACE_HOST_DEPS = cmake flex
 $(eval $(call project-define,bpftrace))
 
 BPFTRACE_EXTRA_LDFLAGS = "-L$(abspath $(ANDROID_OUT_DIR))/lib"
-BPFTRACE_EXTRA_CFLAGS = "-I$(abspath $(ANDROID_OUT_DIR))/include"
 
 ifeq ($(STATIC_LINKING),true)
 BPFTRACE_EXTRA_CMAKE_FLAGS = -DSTATIC_LINKING=ON
@@ -33,7 +32,6 @@ $(BPFTRACE_ANDROID_BUILD_DIR): $(HOST_OUT_DIR)/bin/flex $(STRIP_THUNK)
 	cd $@ && LDFLAGS="$(BPFTRACE_EXTRA_LDFLAGS)" $(CMAKE) $(BPFTRACE_SRCS) \
 		$(ANDROID_EXTRA_CMAKE_FLAGS) \
 		$(BPFTRACE_EXTRA_CMAKE_FLAGS) \
-		-DCMAKE_C_FLAGS="$(BPFTRACE_EXTRA_CFLAGS)" \
 		-DBUILD_TESTING=OFF \
 		-DENABLE_MAN=OFF \
 		-DFLEX_EXECUTABLE=$(abspath $(HOST_OUT_DIR)/bin/flex) \
@@ -45,7 +43,7 @@ $(STRIP_THUNK): projects/bpftrace/strip-thunk | $(HOST_OUT_DIR)
 	@sed -e "s+<STRIP_PATH>+$(ANDROID_TOOLCHAIN_STRIP_PATH)+g" $< > $@
 	chmod +x $@
 
-BPFTRACE_COMMIT = 58bd61287de61ff14136cf0a7e1946db87121f5f
+BPFTRACE_COMMIT = v0.19.1
 BPFTRACE_REPO = https://github.com/iovisor/bpftrace.git/
 projects/bpftrace/sources:
 	git clone $(BPFTRACE_REPO) $@

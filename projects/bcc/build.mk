@@ -19,18 +19,17 @@ endif
 # generates bcc build files for Android
 $(BCC_ANDROID_BUILD_DIR): $(HOST_OUT_DIR)/bin/flex
 	-mkdir $@
-	cd $@ && LDFLAGS="$(BCC_EXTRA_LDFLAGS)" $(CMAKE) $(BCC_SRCS) \
+	cd $@ && CFLAGS="$(BCC_EXTRA_CFLAGS)" CXXFLAGS="$(BCC_EXTRA_CFLAGS)" LDFLAGS="$(BCC_EXTRA_LDFLAGS)" \
+		$(CMAKE) $(BCC_SRCS) \
 		$(ANDROID_EXTRA_CMAKE_FLAGS) \
-		-DCMAKE_C_FLAGS="$(BCC_EXTRA_CFLAGS)" \
-		-DCMAKE_CXX_FLAGS="$(BCC_EXTRA_CFLAGS)" \
 		-DFLEX_EXECUTABLE=$(abspath $(HOST_OUT_DIR)/bin/flex) \
 		-DBPS_LINK_RT=OFF \
 		-DENABLE_TESTS=OFF \
 		-DCMAKE_USE_LIBBPF_PACKAGE=ON \
-		-DPYTHON_CMD=$(abspath $(HOST_OUT_DIR)/bin/python3.10-no--install-layout) \
-		-DREVISION=0.27.0
+		-DPYTHON_CMD=$(abspath $(HOST_OUT_DIR)/bin/python.xinstall)
 
-BCC_TAG = v0.27.0
+BCC_COMMIT = eb8ede2d70b17350757f2570ef76ea4c2e1dbff8
 BCC_REPO = https://github.com/iovisor/bcc
 projects/bcc/sources:
-	git clone $(BCC_REPO) $@ --depth=1 -b $(BCC_TAG)
+	git clone $(BCC_REPO) $@
+	cd $@ && git checkout $(BCC_COMMIT)
